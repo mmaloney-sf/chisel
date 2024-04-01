@@ -2,6 +2,7 @@
 layout: docs
 title:  "Enumerations"
 section: "chisel3"
+sidebar_position: 14
 ---
 
 # ChiselEnum

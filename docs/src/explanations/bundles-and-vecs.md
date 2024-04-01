@@ -2,6 +2,7 @@
 layout: docs
 title:  "Bundles and Vecs"
 section: "chisel3"
+sidebar_position: 4
 ---
 
 # Bundles and Vecs

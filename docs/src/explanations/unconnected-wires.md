@@ -2,6 +2,7 @@
 layout: docs
 title:  "Unconnected Wires"
 section: "chisel3"
+sidebar_position: 23
 ---
 
 # Unconnected Wires

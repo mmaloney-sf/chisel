@@ -2,6 +2,7 @@
 layout: docs
 title:  "Naming"
 section: "chisel3"
+sidebar_position: 22
 ---
 # Naming
 

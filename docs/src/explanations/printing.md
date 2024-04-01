@@ -2,6 +2,7 @@
 layout: docs
 title:  "Printing"
 section: "chisel3"
+sidebar_position: 21
 ---
 
 # Printing in Chisel

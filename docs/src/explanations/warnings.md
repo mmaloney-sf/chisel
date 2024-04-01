@@ -2,6 +2,7 @@
 layout: docs
 title:  "Warnings"
 section: "chisel3"
+sidebar_position: 30
 ---
 
 # Warnings

@@ -2,6 +2,7 @@
 layout: docs
 title:  "Reset"
 section: "chisel3"
+sidebar_position: 19
 ---
 
 # Reset

@@ -2,6 +2,7 @@
 layout: docs
 title:  "Motivation"
 section: "chisel3"
+sidebar_position: 1
 ---
 
 # Motivation -- "Why Chisel?"

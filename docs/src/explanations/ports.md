@@ -2,6 +2,7 @@
 layout: docs
 title:  "Ports"
 section: "chisel3"
+sidebar_position: 9
 ---
 
 # Ports

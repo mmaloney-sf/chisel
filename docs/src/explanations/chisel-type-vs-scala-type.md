@@ -2,6 +2,7 @@
 layout: docs
 title:  "Chisel Type vs Scala Type"
 section: "chisel3"
+sidebar_position: 24
 ---
 
 # Chisel Type vs Scala Type

@@ -2,6 +2,7 @@
 layout: docs
 title:  "Combinational Circuits"
 section: "chisel3"
+sidebar_position: 4
 ---
 
 # Combinational Circuits

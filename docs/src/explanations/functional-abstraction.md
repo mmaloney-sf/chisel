@@ -2,6 +2,7 @@
 layout: docs
 title:  "Functional Abstraction"
 section: "chisel3"
+sidebar_position: 8
 ---
 
 # Functional Abstraction

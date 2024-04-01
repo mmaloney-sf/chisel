@@ -2,6 +2,7 @@
 layout: docs
 title:  "Polymorphism and Parameterization"
 section: "chisel3"
+sidebar_position: 20
 ---
 
 # Polymorphism and Parameterization

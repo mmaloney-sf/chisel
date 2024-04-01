@@ -2,6 +2,7 @@
 layout: docs
 title:  "Annotations"
 section: "chisel3"
+sidebar_position: 28
 ---
 
 # Annotations

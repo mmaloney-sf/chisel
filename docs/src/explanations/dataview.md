@@ -2,6 +2,7 @@
 layout: docs
 title:  "DataView"
 section: "chisel3"
+sidebar_position: 15
 ---
 
 # DataView

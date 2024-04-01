@@ -2,6 +2,7 @@
 layout: docs
 title:  "Supported Hardware"
 section: "chisel3"
+sidebar_position: 2
 ---
 
 # Supported Hardware

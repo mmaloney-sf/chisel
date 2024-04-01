@@ -2,6 +2,7 @@
 layout: docs
 title:  "Multiple Clock Domains"
 section: "chisel3"
+sidebar_position: 18
 ---
 # Multiple Clock Domains
 

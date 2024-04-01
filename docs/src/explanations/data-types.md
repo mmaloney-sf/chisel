@@ -2,6 +2,7 @@
 layout: docs
 title:  "Chisel Data Types"
 section: "chisel3"
+sidebar_position: 3
 ---
 
 # Chisel Data Types

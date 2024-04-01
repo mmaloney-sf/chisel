@@ -2,6 +2,7 @@
 layout: docs
 title:  "Functional Module Creation"
 section: "chisel3"
+sidebar_position: 16
 ---
 
 # Functional Module Creation

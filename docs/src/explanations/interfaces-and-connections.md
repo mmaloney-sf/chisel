@@ -2,6 +2,7 @@
 layout: docs
 title:  "Interfaces and Connections"
 section: "chisel3"
+sidebar_position: 13
 ---
 
 # Interfaces & Connections

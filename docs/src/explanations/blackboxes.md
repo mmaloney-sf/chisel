@@ -2,6 +2,7 @@
 layout: docs
 title:  "Blackboxes"
 section: "chisel3"
+sidebar_position: 14
 ---
 
 # BlackBoxes

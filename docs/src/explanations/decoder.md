@@ -2,6 +2,7 @@
 layout: docs
 title:  "Decoders"
 section: "chisel3"
+sidebar_position: 26
 ---
 
 # Decoders

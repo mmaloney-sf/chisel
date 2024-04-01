@@ -2,6 +2,7 @@
 layout: docs
 title:  "Sequential Circuits"
 section: "chisel3"
+sidebar_position: 11
 ---
 
 # Sequential Circuits

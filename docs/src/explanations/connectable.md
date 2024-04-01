@@ -2,6 +2,7 @@
 layout: docs
 title:  "Connectable Operators"
 section: "chisel3"
+sidebar_position: 25
 ---
 
 ## Table of Contents

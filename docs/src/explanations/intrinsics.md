@@ -2,6 +2,7 @@
 layout: docs
 title:  "Intrinsics"
 section: "chisel3"
+sidebar_position: 27
 ---
 
 # Intrinsics

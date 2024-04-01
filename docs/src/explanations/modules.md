@@ -2,6 +2,7 @@
 layout: docs
 title:  "Modules"
 section: "chisel3"
+sidebar_position: 10
 ---
 
 # Modules

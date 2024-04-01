@@ -2,6 +2,7 @@
 layout: docs
 title:  "Properties"
 section: "chisel3"
+sidebar_position: 32
 ---
 
 # Properties

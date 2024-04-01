@@ -5,6 +5,7 @@ layout: docs
 title:  "Deep Dive into <> and := Connection Operators"
 
 section: "chisel3"
+sidebar_position: 31
 
 ---
 

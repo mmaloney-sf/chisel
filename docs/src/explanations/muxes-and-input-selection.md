@@ -2,6 +2,7 @@
 layout: docs
 title:  "Muxes and Input Selection"
 section: "chisel3"
+sidebar_position: 17
 ---
 
 # Muxes and Input Selection

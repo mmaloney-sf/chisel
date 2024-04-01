@@ -2,6 +2,7 @@
 layout: docs
 title:  "Layers"
 section: "chisel3"
+sidebar_position: 33
 ---
 
 # Layers

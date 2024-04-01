@@ -2,6 +2,7 @@
 layout: docs
 title:  "Memories"
 section: "chisel3"
+sidebar_position: 12
 ---
 
 # Memories

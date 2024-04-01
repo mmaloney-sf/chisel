@@ -2,6 +2,7 @@
 layout: docs
 title:  "Source Locators"
 section: "chisel3"
+sidebar_position: 29
 ---
 
 # Source Locators

@@ -2,6 +2,7 @@
 layout: docs
 title:  "Operators"
 section: "chisel3"
+sidebar_position: 5
 ---
 
 # Chisel Operators

@@ -2,6 +2,7 @@
 layout: docs
 title:  "Width Inference"
 section: "chisel3"
+sidebar_position: 7
 ---
 
 # Width Inference
