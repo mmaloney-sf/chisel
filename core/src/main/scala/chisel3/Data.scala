@@ -8,7 +8,6 @@ import scala.language.experimental.macros
 import chisel3.experimental.{requireIsChiselType, requireIsHardware, Analog, BaseModule}
 import chisel3.experimental.{prefix, SourceInfo, UnlocatableSourceInfo}
 import chisel3.experimental.dataview.{reifyIdentityView, reifySingleTarget, DataViewable}
-import chisel3.internal.Builder.pushCommand
 import chisel3.internal._
 import chisel3.internal.sourceinfo._
 import chisel3.internal.firrtl.ir._
@@ -1025,27 +1024,6 @@ object Data {
   }
 }
 
-trait WireFactory {
-
-  /** Construct a [[Wire]] from a type template
-    * @param t The template from which to construct this wire
-    */
-  def apply[T <: Data](source: => T)(implicit sourceInfo: SourceInfo): T = {
-    val prevId = Builder.idGen.value
-    val t = source // evaluate once (passed by name)
-    requireIsChiselType(t, "wire type")
-
-    val x = if (!t.mustClone(prevId)) t else t.cloneTypeFull
-
-    // Bind each element of x to being a Wire
-    x.bind(WireBinding(Builder.forcedUserModule, Builder.currentWhen))
-
-    pushCommand(DefWire(sourceInfo, x))
-
-    x
-  }
-}
-
 /** Utility for constructing hardware wires
   *
   * The width of a `Wire` (inferred or not) is copied from the type template
@@ -1065,7 +1043,26 @@ trait WireFactory {
   * // Width of w4.known is set to 8
   * }}}
   */
-object Wire extends WireFactory
+object Wire {
+
+  /** Construct a [[Wire]] from a type template
+    * @param t The template from which to construct this wire
+    */
+  def apply[T <: Data](source: => T)(implicit sourceInfo: SourceInfo): T = {
+    val prevId = Builder.idGen.value
+    val t = source // evaluate once (passed by name)
+    requireIsChiselType(t, "wire type")
+
+    val x = if (!t.mustClone(prevId)) t else t.cloneTypeFull
+
+    // Bind each element of x to being a Wire
+    x.bind(WireBinding(Builder.forcedUserModule, Builder.currentWhen))
+
+    Builder.pushCommand(DefWire(sourceInfo, x))
+
+    x
+  }
+}
 
 private[chisel3] sealed trait WireDefaultImpl {
 
