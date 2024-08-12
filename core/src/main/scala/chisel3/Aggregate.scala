@@ -135,7 +135,7 @@ sealed abstract class Aggregate extends Data {
   }
 }
 
-trait VecFactory extends SourceInfoDoc {
+private[chisel3] trait VecFactory extends SourceInfoDoc {
 
   /** Creates a new [[Vec]] with `n` entries of the specified data type.
     *
