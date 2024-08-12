@@ -441,21 +441,12 @@ trait DependencyManager[A, B <: TransformLike[A] with DependencyAPI[B]] extends 
   * @param targets the [[Phase]]s you want to run
   */
 class PhaseManager(
-  val targets:      Seq[PhaseManager.PhaseDependency],
-  val currentState: Seq[PhaseManager.PhaseDependency] = Seq.empty,
+  val targets:      Seq[Dependency[Phase]],
+  val currentState: Seq[Dependency[Phase]] = Seq.empty,
   val knownObjects: Set[Phase] = Set.empty)
     extends DependencyManager[AnnotationSeq, Phase]
     with Phase {
-
-  import PhaseManager.PhaseDependency
-  protected def copy(a: Seq[PhaseDependency], b: Seq[PhaseDependency], c: ISet[Phase]) = new PhaseManager(a, b, c)
-}
-
-object PhaseManager {
-
-  /** The type used to represent dependencies between [[Phase]]s */
-  type PhaseDependency = Dependency[Phase]
-
+  protected def copy(a: Seq[Dependency[Phase]], b: Seq[Dependency[Phase]], c: ISet[Phase]) = new PhaseManager(a, b, c)
 }
 
 object DependencyManagerUtils {
