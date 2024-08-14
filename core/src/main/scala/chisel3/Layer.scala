@@ -80,13 +80,13 @@ object layer {
     Builder.pushCommand(LayerBlockBegin(sourceInfo, layer))
     addLayer(layer)
     require(
-      Builder.layerStack.head == layer.parent,
+      Builder.topLayer == layer.parent,
       s"nested layer '${layer.name}' must be wrapped in parent layer '${layer.parent.name}'"
     )
-    Builder.layerStack = layer :: Builder.layerStack
-    thunk
-    Builder.pushCommand(LayerBlockEnd(sourceInfo))
-    Builder.layerStack = Builder.layerStack.tail
-  }
 
+    Builder.withLayer(layer, {
+      thunk
+      Builder.pushCommand(LayerBlockEnd(sourceInfo))
+    })
+  }
 }

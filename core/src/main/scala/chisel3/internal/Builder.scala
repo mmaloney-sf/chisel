@@ -833,9 +833,13 @@ private[chisel3] object Builder extends LazyLogging {
     dynamicContext.currentDisable = newDisable
   }
 
-  def layerStack: List[layer.Layer] = dynamicContext.layerStack
-  def layerStack_=(s: List[layer.Layer]): Unit = {
-    dynamicContext.layerStack = s
+  def topLayer: layer.Layer = dynamicContext.layerStack.head
+
+  def withLayer(newLayer: layer.Layer, body: => Unit) = {
+    val oldStack = dynamicContext.layerStack
+    dynamicContext.layerStack = newLayer :: oldStack
+    val _ = body
+    dynamicContext.layerStack = oldStack
   }
 
   def inDefinition: Boolean = {
