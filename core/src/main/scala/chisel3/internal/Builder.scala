@@ -455,12 +455,12 @@ private[chisel3] class DynamicContext(
   val throwOnFirstError: Boolean,
   val warningFilters:    Seq[WarningFilter],
   val sourceRoots:       Seq[File],
-  val defaultNamespace:  Option[Namespace],
+  private val defaultNamespace:  Option[Namespace],
   // Definitions from other scopes in the same elaboration, use allDefinitions below
   val loggerOptions: LoggerOptions,
   val definitions:   ArrayBuffer[Definition[_]],
   val contextCache:  BuilderContextCache) {
-  val importedDefinitionAnnos = annotationSeq.collect { case a: ImportDefinitionAnnotation[_] => a }
+  private val importedDefinitionAnnos = annotationSeq.collect { case a: ImportDefinitionAnnotation[_] => a }
 
   // Map from proto module name to ext-module name
   // Pick the definition name by default in case not overridden
