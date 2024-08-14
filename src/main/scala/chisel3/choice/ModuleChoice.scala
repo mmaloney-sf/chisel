@@ -54,7 +54,7 @@ object ModuleChoice extends SourceInfoDoc {
         if (!instModule.io.typeEquivalent(instDefaultModule.io)) {
           Builder.error("Error: choice module IO bundles are not type equivalent")
         }
-        Builder.options += choice
+        Builder.addChoice(choice)
         (choice, instModule)
     }
 

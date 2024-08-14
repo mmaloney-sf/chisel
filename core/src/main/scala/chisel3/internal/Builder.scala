@@ -597,7 +597,11 @@ private[chisel3] object Builder extends LazyLogging {
   def annotations: ArrayBuffer[ChiselAnnotation] = dynamicContext.annotations
 
   def layers:  mutable.LinkedHashSet[layer.Layer] = dynamicContext.layers
-  def options: mutable.LinkedHashSet[choice.Case] = dynamicContext.options
+  private def options: mutable.LinkedHashSet[choice.Case] = dynamicContext.options
+
+  def addChoice(c: choice.Case) = {
+    options += c
+  }
 
   def contextCache: BuilderContextCache = dynamicContext.contextCache
 
