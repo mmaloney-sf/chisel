@@ -613,7 +613,11 @@ private[chisel3] object Builder extends LazyLogging {
   def importedDefinitionMap: Map[String, String] = dynamicContext.importedDefinitionMap
 
   def unnamedViews:  ArrayBuffer[Data] = dynamicContext.unnamedViews
-  def viewNamespace: Namespace = chiselContext.get.viewNamespace
+  private def viewNamespace: Namespace = chiselContext.get.viewNamespace
+
+  def forceName(data: Data) = {
+    data.forceName("view", Builder.viewNamespace)
+  }
 
   // Puts a prefix string onto the prefix stack
   def pushPrefix(d: String): Unit = {

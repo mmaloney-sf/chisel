@@ -223,7 +223,7 @@ object Lookupable {
 
     result.bind(newBinding)
     result.setAllParents(Some(ViewParent))
-    result.forceName("view", Builder.viewNamespace)
+    Builder.forceName(result)
     result
   }
 
