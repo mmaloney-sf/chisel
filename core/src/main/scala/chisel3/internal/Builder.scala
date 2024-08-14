@@ -561,8 +561,6 @@ private[chisel3] object Builder extends LazyLogging {
 
   // Returns the current dynamic context
   def captureContext(): DynamicContext = dynamicContext
-  // Sets the current dynamic contents
-  def restoreContext(dc: DynamicContext) = dynamicContextVar.value = Some(dc)
 
   // Ensure we have a thread-specific ChiselContext
   private val chiselContext = new ThreadLocal[ChiselContext] {
@@ -590,7 +588,7 @@ private[chisel3] object Builder extends LazyLogging {
   def globalNamespace:           Namespace = dynamicContext.globalNamespace
   def globalIdentifierNamespace: Namespace = dynamicContext.globalIdentifierNamespace
 
-  def aliasMap: mutable.LinkedHashMap[String, (fir.Type, SourceInfo)] =
+  private def aliasMap: mutable.LinkedHashMap[String, (fir.Type, SourceInfo)] =
     dynamicContext.aliasMap
 
   def components:  ArrayBuffer[Component] = dynamicContext.components
@@ -902,7 +900,7 @@ private[chisel3] object Builder extends LazyLogging {
     case _ => // Do nothing
   }
 
-  def errors: ErrorLog = dynamicContext.errors
+  private def errors: ErrorLog = dynamicContext.errors
   def error(m: => String)(implicit sourceInfo: SourceInfo): Unit = {
     // If --throw-on-first-error is requested, throw an exception instead of aggregating errors
     if (dynamicContextVar.value.isDefined) {
@@ -925,11 +923,6 @@ private[chisel3] object Builder extends LazyLogging {
   def exception(m: => String)(implicit sourceInfo: SourceInfo): Nothing = {
     error(m)
     throwException(m)
-  }
-
-  def getScalaMajorVersion: Int = {
-    val "2" :: major :: _ :: Nil = chisel3.BuildInfo.scalaVersion.split("\\.").toList
-    major.toInt
   }
 
   // Builds a RenameMap for all Views that do not correspond to a single Data
