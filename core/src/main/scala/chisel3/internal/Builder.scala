@@ -4,6 +4,7 @@ package chisel3.internal
 
 import scala.util.DynamicVariable
 import scala.collection.mutable.ArrayBuffer
+import scala.annotation.nowarn
 import chisel3._
 import chisel3.experimental._
 import chisel3.experimental.hierarchy.core.{Clone, Definition, ImportDefinitionAnnotation, Instance}
@@ -11,6 +12,7 @@ import chisel3.properties.Class
 import chisel3.internal.firrtl.ir._
 import chisel3.internal.firrtl.Converter
 import chisel3.internal.naming._
+import chisel3.experimental.hierarchy.core.IsInstantiable
 import _root_.firrtl.annotations.{Annotation, CircuitName, ComponentName, IsMember, ModuleName, Named, ReferenceTarget}
 import _root_.firrtl.annotations.AnnotationUtils.validComponentName
 import _root_.firrtl.AnnotationSeq
@@ -559,8 +561,27 @@ private[chisel3] object Builder extends LazyLogging {
   // Used to suppress warnings when casting from a UInt to an Enum
   var suppressEnumCastWarning: Boolean = false
 
-  // Returns the current dynamic context
-  def captureContext(): DynamicContext = dynamicContext
+  def captureDefinition[M <: BaseModule with IsInstantiable](proto: => M)(implicit sourceInfo: SourceInfo): (Circuit, M) = {
+    val dynamicContext = {
+      val context = Builder.dynamicContext
+      new DynamicContext(
+        Nil,
+        context.throwOnFirstError,
+        context.warningFilters,
+        context.sourceRoots,
+        Some(context.globalNamespace),
+        context.loggerOptions,
+        context.definitions,
+        context.contextCache
+      )
+    }
+    dynamicContext.inDefinition = true
+    val (ir, module) = Builder.build(Module(proto), dynamicContext, false)
+    Builder.components ++= ir.components
+    Builder.annotations ++= ir.annotations: @nowarn // this will go away when firrtl is merged
+    module._circuit = Builder.currentModule
+    (ir, module)
+  }
 
   // Ensure we have a thread-specific ChiselContext
   private val chiselContext = new ThreadLocal[ChiselContext] {

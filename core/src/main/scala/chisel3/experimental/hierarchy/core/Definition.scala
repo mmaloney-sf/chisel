@@ -11,8 +11,6 @@ import chisel3.internal.sourceinfo.{DefinitionTransform, DefinitionWrapTransform
 import chisel3.experimental.{BaseModule, SourceInfo}
 import firrtl.annotations.{IsModule, ModuleTarget, NoTargetAnnotation}
 
-import scala.annotation.nowarn
-
 /** User-facing Definition type.
   * Represents a definition of an object of type `A` which are marked as @instantiable
   * Can be created using Definition.apply method.
@@ -99,24 +97,7 @@ object Definition extends SourceInfoDoc {
   )(
     implicit sourceInfo: SourceInfo
   ): Definition[T] = {
-    val dynamicContext = {
-      val context = Builder.captureContext()
-      new DynamicContext(
-        Nil,
-        context.throwOnFirstError,
-        context.warningFilters,
-        context.sourceRoots,
-        Some(context.globalNamespace),
-        context.loggerOptions,
-        context.definitions,
-        context.contextCache
-      )
-    }
-    dynamicContext.inDefinition = true
-    val (ir, module) = Builder.build(Module(proto), dynamicContext, false)
-    Builder.components ++= ir.components
-    Builder.annotations ++= ir.annotations: @nowarn // this will go away when firrtl is merged
-    module._circuit = Builder.currentModule
+    val (ir, module) = Builder.captureDefinition(proto)
     module.toDefinition
   }
 
