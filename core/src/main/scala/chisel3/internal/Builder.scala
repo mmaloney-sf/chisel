@@ -1030,94 +1030,85 @@ private[chisel3] object Builder extends LazyLogging {
   private[chisel3] def build[T <: BaseModule](
     f:              => T,
     dynamicContext: DynamicContext,
-    forceModName:   Boolean = true
+    forceModName:   Boolean = true,
   ): (Circuit, T) = {
-    // Logger has its own context separate from Chisel's dynamic context
     _root_.logger.Logger.makeScope(dynamicContext.loggerOptions) {
-      buildImpl(f, dynamicContext, forceModName)
-    }
-  }
-
-  private def buildImpl[T <: BaseModule](
-    f:              => T,
-    dynamicContext: DynamicContext,
-    forceModName:   Boolean
-  ): (Circuit, T) = {
-    dynamicContextVar.withValue(Some(dynamicContext)) {
-      // Must initialize the singleton in a Builder context or weird things can happen
-      // in tiny designs/testcases that never access anything in chisel3.internal.
-      ViewParent: Unit
-      // Must initialize the singleton or OutOfMemoryErrors and StackOverflowErrors will instead report as
-      // "java.lang.NoClassDefFoundError: Could not initialize class scala.util.control.NonFatal$".
-      scala.util.control.NonFatal: Unit
-      logger.info("Elaborating design...")
-      val mod =
-        try {
-          val m = f
-          if (forceModName) { // This avoids definition name index skipping with D/I
-            m.forceName(m.name, globalNamespace)
+      dynamicContextVar.withValue(Some(dynamicContext)) {
+        // Must initialize the singleton in a Builder context or weird things can happen
+        // in tiny designs/testcases that never access anything in chisel3.internal.
+        ViewParent: Unit
+        // Must initialize the singleton or OutOfMemoryErrors and StackOverflowErrors will instead report as
+        // "java.lang.NoClassDefFoundError: Could not initialize class scala.util.control.NonFatal$".
+        scala.util.control.NonFatal: Unit
+        logger.info("Elaborating design...")
+        val mod =
+          try {
+            val m = f
+            if (forceModName) { // This avoids definition name index skipping with D/I
+              m.forceName(m.name, globalNamespace)
+            }
+            m
+          } catch {
+            case NonFatal(e) =>
+              // Make sure to report any aggregated errors in case the Exception is due to a tainted return value
+              // Note that errors.checkpoint may throw an Exception which will suppress e
+              errors.checkpoint(logger)
+              throw e
           }
-          m
-        } catch {
-          case NonFatal(e) =>
-            // Make sure to report any aggregated errors in case the Exception is due to a tainted return value
-            // Note that errors.checkpoint may throw an Exception which will suppress e
-            errors.checkpoint(logger)
-            throw e
+        errors.checkpoint(logger)
+        logger.info("Done elaborating.")
+
+        val typeAliases = aliasMap.flatMap {
+          case (name, (underlying: fir.Type, info: SourceInfo)) => Some(DefTypeAlias(info, underlying, name))
+          case _ => None
+        }.toSeq
+
+        /** Stores an adjacency list representation of layers.  Connections indicating children. */
+        val layerAdjacencyList = mutable
+          .LinkedHashMap[layer.Layer, mutable.LinkedHashSet[layer.Layer]]()
+          .withDefault(_ => mutable.LinkedHashSet[layer.Layer]())
+
+        // Populate the adjacency list.
+        layers.foreach { layer =>
+          layerAdjacencyList(layer.parent) = layerAdjacencyList(layer.parent) += layer
         }
-      errors.checkpoint(logger)
-      logger.info("Done elaborating.")
 
-      val typeAliases = aliasMap.flatMap {
-        case (name, (underlying: fir.Type, info: SourceInfo)) => Some(DefTypeAlias(info, underlying, name))
-        case _ => None
-      }.toSeq
-
-      /** Stores an adjacency list representation of layers.  Connections indicating children. */
-      val layerAdjacencyList = mutable
-        .LinkedHashMap[layer.Layer, mutable.LinkedHashSet[layer.Layer]]()
-        .withDefault(_ => mutable.LinkedHashSet[layer.Layer]())
-
-      // Populate the adjacency list.
-      layers.foreach { layer =>
-        layerAdjacencyList(layer.parent) = layerAdjacencyList(layer.parent) += layer
-      }
-
-      /** For a `layer.Layer` all its children and fold them into a `Layer`.  This
-        * "folding" creates one `Layer` for each child nested under each parent
-        * `Layer`.
-        */
-      def foldLayers(l: layer.Layer): Layer = {
-        val children = layerAdjacencyList(l)
-        val convention = l.convention match {
-          case layer.Convention.Bind => LayerConvention.Bind
-          case _                     => ???
+        /** For a `layer.Layer` all its children and fold them into a `Layer`.  This
+          * "folding" creates one `Layer` for each child nested under each parent
+          * `Layer`.
+          */
+        def foldLayers(l: layer.Layer): Layer = {
+          val children = layerAdjacencyList(l)
+          val convention = l.convention match {
+            case layer.Convention.Bind => LayerConvention.Bind
+            case _                     => ???
+          }
+          Layer(l.sourceInfo, l.name, convention, children.map(foldLayers).toSeq)
         }
-        Layer(l.sourceInfo, l.name, convention, children.map(foldLayers).toSeq)
-      }
 
-      val optionDefs = groupByIntoSeq(options)(opt => opt.group).map {
-        case (optGroup, cases) =>
-          DefOption(
-            optGroup.sourceInfo,
-            optGroup.name,
-            cases.map(optCase => DefOptionCase(optCase.sourceInfo, optCase.name))
-          )
-      }
+        val optionDefs = groupByIntoSeq(options)(opt => opt.group).map {
+          case (optGroup, cases) =>
+            DefOption(
+              optGroup.sourceInfo,
+              optGroup.name,
+              cases.map(optCase => DefOptionCase(optCase.sourceInfo, optCase.name))
+            )
+        }
 
-      (
-        Circuit(
-          components.last.name,
-          components.toSeq,
-          annotations.toSeq,
-          makeViewRenameMap,
-          newAnnotations.toSeq,
-          typeAliases,
-          layerAdjacencyList(layer.Layer.Root).map(foldLayers).toSeq,
-          optionDefs
-        ),
-        mod
-      )
+        (
+          Circuit(
+            components.last.name,
+            components.toSeq,
+            annotations.toSeq,
+            makeViewRenameMap,
+            newAnnotations.toSeq,
+            typeAliases,
+            layerAdjacencyList(layer.Layer.Root).map(foldLayers).toSeq,
+            optionDefs
+          ),
+          mod
+        )
+      }
     }
   }
 }
